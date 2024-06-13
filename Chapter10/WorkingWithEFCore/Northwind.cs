@@ -10,6 +10,8 @@ namespace Packt.Shared {
                 .Property(category => category.CategoryName)
                 .IsRequired()
                 .HasMaxLength(15);
+            modelBuilder.Entity<Product>()
+                .HasQueryFilter(product => !product.Discontinued);
             if (ProjectConstant.DatabaseProvider == "SQLite") {
                 modelBuilder.Entity<Product>()
                     .Property(product => product.Cost)
