@@ -7,7 +7,7 @@ namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
             Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
-            QueryingWithLike();
+            QueryingCategories();
         }
 
         static void QueryingCategories() {
@@ -15,8 +15,8 @@ namespace WorkingWithEFCore {
             using (Northwind db = new()) {
                 ILoggerFactory loggerFactory = db.GetService<ILoggerFactory>();
                 loggerFactory.AddProvider(new ConsoleLoggerProvider());
-                IQueryable<Category>? categories = db.Categories?
-                    .Include(category => category.Products);
+                IQueryable<Category>? categories = db.Categories;
+                //.Include(category => category.Products);
                 if (categories is null) {
                     Console.WriteLine("No categories found.");
                     return;
@@ -33,7 +33,7 @@ namespace WorkingWithEFCore {
                 string unitsInStock = Console.ReadLine() ?? "10";
                 int stock = int.Parse(unitsInStock);
                 IQueryable<Category>? categories = db.Categories?
-                    .Include(category => category.Products.Where(product => product.Stock >= stock));
+                .Include(category => category.Products.Where(product => product.Stock >= stock));
                 if (categories is null) {
                     Console.WriteLine("No categories found.");
                     return;
