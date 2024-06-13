@@ -5,7 +5,7 @@ namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
             Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
-            QueryingProducts();
+            FilteredIncludes();
         }
 
         static void QueryingCategories() {
@@ -34,6 +34,7 @@ namespace WorkingWithEFCore {
                     Console.WriteLine("No categories found.");
                     return;
                 }
+                Console.WriteLine($"ToQueryString: {categories.ToQueryString()}");
                 foreach (Category c in categories) {
                     Console.WriteLine($"{c.CategoryName} has {c.Products.Count} products with a minimum of {stock} units in stock.");
                     foreach (Product p in c.Products) {
