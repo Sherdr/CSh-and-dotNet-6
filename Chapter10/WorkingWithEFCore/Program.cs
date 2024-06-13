@@ -1,7 +1,9 @@
-﻿namespace WorkingWithEFCore {
+﻿using Packt.Shared;
+
+namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
-            Console.WriteLine("Hello, World!");
+            Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
         }
     }
 }
