@@ -7,7 +7,7 @@ namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
             Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
-            QueryingCategories();
+            QueryingProducts();
         }
 
         static void QueryingCategories() {
@@ -60,6 +60,7 @@ namespace WorkingWithEFCore {
                     input = Console.ReadLine();
                 } while (!decimal.TryParse(input, out price));
                 IQueryable<Product>? products = db.Products?
+                    .TagWith("Products filtered by price and sorted.")
                     .Where(product => product.Cost > price)
                     .OrderByDescending(product => product.Cost);
                 if (products is null) {
@@ -67,7 +68,7 @@ namespace WorkingWithEFCore {
                     return;
                 }
                 foreach (Product p in products) {
-                    Console.WriteLine($"{p.ProductId}: {p.ProductName} costs {p.Cost:$#,##0.00} and has {p.Stock} in stock.");
+                    Console.WriteLine($"{p.ProductId}: \t{p.ProductName} costs {p.Cost:$#,##0.00} and has {p.Stock} in stock.");
                 }
             }
         }
