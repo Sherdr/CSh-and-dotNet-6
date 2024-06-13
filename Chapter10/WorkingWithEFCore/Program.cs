@@ -7,7 +7,7 @@ namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
             Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
-            QueryingProducts();
+            QueryingWithLike();
         }
 
         static void QueryingCategories() {
@@ -69,6 +69,24 @@ namespace WorkingWithEFCore {
                 }
                 foreach (Product p in products) {
                     Console.WriteLine($"{p.ProductId}: \t{p.ProductName} costs {p.Cost:$#,##0.00} and has {p.Stock} in stock.");
+                }
+            }
+        }
+
+        static void QueryingWithLike() {
+            using (Northwind db = new()) {
+                ILoggerFactory loggerFactory = db.GetService<ILoggerFactory>();
+                loggerFactory.AddProvider(new ConsoleLoggerProvider());
+                Console.WriteLine("Enter part of a product name: ");
+                string? input = Console.ReadLine();
+                IQueryable<Product>? products = db.Products?
+                    .Where(product => EF.Functions.Like(product.ProductName, $"%{input}%"));
+                if (products is null) {
+                    Console.WriteLine("No products found.");
+                    return;
+                }
+                foreach (Product p in products) {
+                    Console.WriteLine($"{p.ProductName} has {p.Stock} units in stock. Discontinued - {p.Discontinued}.");
                 }
             }
         }
