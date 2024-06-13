@@ -23,7 +23,7 @@ namespace Packt.Shared {
                 optionsBuilder.UseSqlite($"Filename={path}");
             }
             else {
-                string connection = "Data Source=.;" +
+                string connection = "Data Source=(localdb)\\mssqllocaldb;" +
                     "Initial Catalog=Northwind;" +
                     "Integrated Security=true;" +
                     "MultipleActiveResultSets=true;";

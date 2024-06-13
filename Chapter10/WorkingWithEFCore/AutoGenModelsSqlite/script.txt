@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold "Filename=Northwind.db" Microsoft.EntityFrameWorkCore.Sqlite --table Categories --table Products --output-dir AutoGenModelsSqlite --namespace WorkingWithEFCore.AutoGen.Sqlite --data-annotations --context Northwind

@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold "Data Source=(localdb)\mssqllocaldb;Initial Catalog=Northwind;Integrated Security=true;" Microsoft.EntityFrameWorkCore.SqlServer --table Categories --table Products --output-dir AutoGenModelsSqlServer --namespace WorkingWithEFCore.AutoGen.SqlServer --data-annotations --context Northwind
