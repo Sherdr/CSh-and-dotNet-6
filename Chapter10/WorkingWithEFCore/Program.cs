@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Logging;
 using Packt.Shared;
 
 namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
             Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
-            FilteredIncludes();
+            QueryingProducts();
         }
 
         static void QueryingCategories() {
@@ -46,6 +48,8 @@ namespace WorkingWithEFCore {
 
         static void QueryingProducts() {
             using (Northwind db = new()) {
+                ILoggerFactory loggerFactory = db.GetService<ILoggerFactory>();
+                loggerFactory.AddProvider(new ConsoleLoggerProvider());
                 Console.WriteLine("Products than cost more than a price, highest at top");
                 string? input;
                 decimal price;
