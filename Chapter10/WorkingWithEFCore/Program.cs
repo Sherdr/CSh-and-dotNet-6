@@ -5,7 +5,7 @@ namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
             Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
-            FilteredIncludes();
+            QueryingProducts();
         }
 
         static void QueryingCategories() {
@@ -39,6 +39,28 @@ namespace WorkingWithEFCore {
                     foreach (Product p in c.Products) {
                         Console.WriteLine($"\t{p.ProductName} has {p.Stock} units in stock.");
                     }
+                }
+            }
+        }
+
+        static void QueryingProducts() {
+            using (Northwind db = new()) {
+                Console.WriteLine("Products than cost more than a price, highest at top");
+                string? input;
+                decimal price;
+                do {
+                    Console.WriteLine("Enter a product price: ");
+                    input = Console.ReadLine();
+                } while (!decimal.TryParse(input, out price));
+                IQueryable<Product>? products = db.Products?
+                    .Where(product => product.Cost > price)
+                    .OrderByDescending(product => product.Cost);
+                if (products is null) {
+                    Console.WriteLine("No products found.");
+                    return;
+                }
+                foreach (Product p in products) {
+                    Console.WriteLine($"{p.ProductId}: {p.ProductName} costs {p.Cost:$#,##0.00} and has {p.Stock} in stock.");
                 }
             }
         }
