@@ -12,10 +12,10 @@ namespace Packt.Shared {
         [Column("UnitPrice", TypeName = "money")]
         public decimal? Cost { get; set; }
 
-        [Column("UnitInStock")]
+        [Column("UnitsInStock")]
         public short? Stock { get; set; }
-        public bool Disconting { get; set; }
+        public bool Discontinued { get; set; }
         public int CategoryId { get; set; }
-        public virtual Category Category { get; set; }
+        public virtual Category Category { get; set; } = null!;
     }
 }
