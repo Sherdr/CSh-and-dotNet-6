@@ -7,12 +7,14 @@ namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
             Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
-            QueryingProducts();
+            QueryingCategories();
         }
 
         static void QueryingCategories() {
             Console.WriteLine("Categories and how many products they have:");
             using (Northwind db = new()) {
+                ILoggerFactory loggerFactory = db.GetService<ILoggerFactory>();
+                loggerFactory.AddProvider(new ConsoleLoggerProvider());
                 IQueryable<Category>? categories = db.Categories?
                     .Include(category => category.Products);
                 if (categories is null) {

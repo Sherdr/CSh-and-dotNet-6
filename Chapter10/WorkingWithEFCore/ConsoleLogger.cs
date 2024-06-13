@@ -33,14 +33,16 @@ namespace Packt.Shared {
         public void Log<TState>(LogLevel logLevel,
             EventId eventId, TState state, Exception? exception,
             Func<TState, Exception?, string> formatter) {
-            Console.Write($"Level: {logLevel}, Event Id: {eventId.Id}");
-            if (state != null) {
-                Console.Write($", State: {state}");
+            if (eventId.Id == 20100) {
+                Console.Write($"Level: {logLevel}, Event: {eventId.Name}");
+                if (state != null) {
+                    Console.Write($", State: {state}");
+                }
+                if (exception != null) {
+                    Console.Write($", Exception: {exception.Message}.");
+                }
+                Console.WriteLine();
             }
-            if (exception != null) {
-                Console.Write($", Exception: {exception.Message}.");
-            }
-            Console.WriteLine();
         }
     }
 }
