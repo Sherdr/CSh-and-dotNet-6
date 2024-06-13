@@ -19,6 +19,7 @@ namespace Packt.Shared {
             }
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+            optionsBuilder.UseLazyLoadingProxies();
             if (ProjectConstant.DatabaseProvider == "SQLite") {
                 string path = Path.Combine(Environment.CurrentDirectory, "Northwind.db");
                 Console.WriteLine($"Using {path} database file.");
