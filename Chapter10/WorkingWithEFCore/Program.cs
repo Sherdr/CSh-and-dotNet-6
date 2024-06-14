@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Packt.Shared;
@@ -15,13 +16,35 @@ namespace WorkingWithEFCore {
             using (Northwind db = new()) {
                 ILoggerFactory loggerFactory = db.GetService<ILoggerFactory>();
                 loggerFactory.AddProvider(new ConsoleLoggerProvider());
-                IQueryable<Category>? categories = db.Categories;
+                IQueryable<Category>? categories;
+                // = db.Categories;
                 //.Include(category => category.Products);
-                if (categories is null) {
-                    Console.WriteLine("No categories found.");
-                    return;
+                db.ChangeTracker.LazyLoadingEnabled = false;
+                Console.WriteLine("Enable eager loading? (Y/N): ");
+                bool eagerLoading = Console.ReadKey().Key == ConsoleKey.Y;
+                bool explicitLoading = false;
+                if (eagerLoading) {
+                    categories = db.Categories?
+                        .Include(category => category.Products);
+                }
+                else {
+                    categories = db.Categories;
+                    Console.WriteLine("Enable explicit loading? (Y/N): ");
+                    explicitLoading = Console.ReadKey().Key == ConsoleKey.Y;
+                    Console.WriteLine();
                 }
                 foreach (Category c in categories) {
+                    if (explicitLoading) {
+                        Console.WriteLine($"Explicitly load products for {c.CategoryName}? (Y/N): ");
+                        ConsoleKeyInfo key = Console.ReadKey();
+                        if (key.Key == ConsoleKey.Y) {
+                            CollectionEntry<Category, Product> products = db.Entry(c)
+                                .Collection(cat => cat.Products);
+                            if (!products.IsLoaded) {
+                                products.Load();
+                            }
+                        }
+                    }
                     Console.WriteLine($"{c.CategoryName} has {c.Products.Count} products.");
                 }
             }
