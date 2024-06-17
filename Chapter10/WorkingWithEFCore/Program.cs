@@ -8,7 +8,10 @@ namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
             Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
-            QueryingCategories();
+            if (AddProduct(6, "Bob's Burgers", 500m)) {
+                Console.WriteLine("Add product successful.");
+            }
+            ListProducts();
         }
 
         static void QueryingCategories() {
@@ -110,6 +113,31 @@ namespace WorkingWithEFCore {
                 }
                 foreach (Product p in products) {
                     Console.WriteLine($"{p.ProductName} has {p.Stock} units in stock. Discontinued - {p.Discontinued}.");
+                }
+            }
+        }
+
+        static bool AddProduct(int categoryId,
+            string productName, decimal? price) {
+            using (Northwind db = new()) {
+                Product product = new() {
+                    CategoryId = categoryId,
+                    ProductName = productName,
+                    Cost = price
+                };
+                db.Products.Add(product);
+                int affected = db.SaveChanges();
+                return affected == 1;
+            }
+        }
+        static void ListProducts() {
+            using (Northwind db = new()) {
+                Console.WriteLine($"{"Id",-3} {"Name",-35} " +
+                    $"{"Cost",8} {"Stock",5} {"Disc."}");
+                foreach (Product prod in db.Products
+                    .OrderByDescending(p => p.Cost)) {
+                    Console.WriteLine($"{prod.ProductId:0000} {prod.ProductName,-35} " +
+                    $"{prod.Cost,8:$#,##0.00} {prod.Stock,5} {prod.Discontinued}");
                 }
             }
         }
