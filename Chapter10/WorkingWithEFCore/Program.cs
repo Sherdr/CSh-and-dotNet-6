@@ -8,8 +8,11 @@ namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
             Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
-            if (AddProduct(6, "Bob's Burgers", 500m)) {
-                Console.WriteLine("Add product successful.");
+            //if (AddProduct(6, "Bob's Burgers", 500m)) {
+            //    Console.WriteLine("Add product successful.");
+            //}
+            if (IncreaseProductPrice("Bob", 20)) {
+                Console.WriteLine("update product price successful.");
             }
             ListProducts();
         }
@@ -117,8 +120,7 @@ namespace WorkingWithEFCore {
             }
         }
 
-        static bool AddProduct(int categoryId,
-            string productName, decimal? price) {
+        static bool AddProduct(int categoryId, string productName, decimal? price) {
             using (Northwind db = new()) {
                 Product product = new() {
                     CategoryId = categoryId,
@@ -130,6 +132,7 @@ namespace WorkingWithEFCore {
                 return affected == 1;
             }
         }
+
         static void ListProducts() {
             using (Northwind db = new()) {
                 Console.WriteLine($"{"Id",-3} {"Name",-35} " +
@@ -139,6 +142,15 @@ namespace WorkingWithEFCore {
                     Console.WriteLine($"{prod.ProductId:0000} {prod.ProductName,-35} " +
                     $"{prod.Cost,8:$#,##0.00} {prod.Stock,5} {prod.Discontinued}");
                 }
+            }
+        }
+
+        static bool IncreaseProductPrice(string productNameStartWith, decimal amount) {
+            using (Northwind db = new()) {
+                Product updateProduct = db.Products.First(p => p.ProductName.StartsWith(productNameStartWith));
+                updateProduct.Cost += amount;
+                int affected = db.SaveChanges();
+                return (affected == 1);
             }
         }
     }
