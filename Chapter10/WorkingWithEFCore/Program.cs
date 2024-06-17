@@ -8,13 +8,7 @@ namespace WorkingWithEFCore {
     internal class Program {
         static void Main(string[] args) {
             Console.WriteLine($"Using {ProjectConstant.DatabaseProvider} provider.");
-            //if (AddProduct(6, "Bob's Burgers", 500m)) {
-            //    Console.WriteLine("Add product successful.");
-            //}
-            if (IncreaseProductPrice("Bob", 20)) {
-                Console.WriteLine("update product price successful.");
-            }
-            ListProducts();
+            Console.WriteLine($"{DeleteProducts("Bob")} product(s) were deleted.");
         }
 
         static void QueryingCategories() {
@@ -151,6 +145,22 @@ namespace WorkingWithEFCore {
                 updateProduct.Cost += amount;
                 int affected = db.SaveChanges();
                 return (affected == 1);
+            }
+        }
+
+        static int DeleteProducts(string productNameStartWith) {
+            using (Northwind db = new()) {
+                IQueryable<Product>? products = db.Products?
+                    .Where(p => p.ProductName.StartsWith(productNameStartWith));
+                if (products is null) {
+                    Console.WriteLine("No products found.");
+                    return 0;
+                }
+                else {
+                    db.Products.RemoveRange(products);
+                }
+                int affected = db.SaveChanges();
+                return affected;
             }
         }
     }
