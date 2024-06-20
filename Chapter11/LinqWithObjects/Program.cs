@@ -1,4 +1,8 @@
-﻿namespace LinqWithObjects {
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace LinqWithObjects {
     internal class Program {
         static void Main(string[] args) {
             string[] names = new[] {
@@ -10,15 +14,15 @@
             string[] result1 = query1.ToArray();
             List<string> result2 = query2.ToList();
 
-            foreach (string name in result1) {
+            var query = names.Where(new Func<string, bool>(NameLongerThanFour));
+            Console.WriteLine("Writing queries.");
+            foreach (string name in query) {
                 Console.WriteLine(name);
-                names[2] = "Jimmy";
+                //names[2] = "Jimmy";
             }
-            Console.WriteLine("Deferred execution.");
-            foreach (string name in query1) {
-                Console.WriteLine(name);
-                names[2] = "Jimmy";
-            }
+        }
+        static bool NameLongerThanFour(string name) {
+            return name.Length > 4;
         }
     }
 }
