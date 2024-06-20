@@ -10,7 +10,10 @@
             string[] result1 = query1.ToArray();
             List<string> result2 = query2.ToList();
 
-            var query = names.Where(name => name.Length > 4);
+            var query = names
+                .Where(name => name.Length > 4)
+                .OrderBy(name => name.Length)
+                .ThenBy(name => name);
             Console.WriteLine("Writing queries.");
             foreach (string name in query) {
                 Console.WriteLine(name);
