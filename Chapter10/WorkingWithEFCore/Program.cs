@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Packt.Shared;
 
@@ -150,17 +151,21 @@ namespace WorkingWithEFCore {
 
         static int DeleteProducts(string productNameStartWith) {
             using (Northwind db = new()) {
-                IQueryable<Product>? products = db.Products?
-                    .Where(p => p.ProductName.StartsWith(productNameStartWith));
-                if (products is null) {
-                    Console.WriteLine("No products found.");
-                    return 0;
+                using (IDbContextTransaction t = db.Database.BeginTransaction()) {
+                    Console.WriteLine($"Transaction isolation level: {t.GetDbTransaction().IsolationLevel}");
+                    IQueryable<Product>? products = db.Products?
+                        .Where(p => p.ProductName.StartsWith(productNameStartWith));
+                    if (products is null) {
+                        Console.WriteLine("No products found.");
+                        return 0;
+                    }
+                    else {
+                        db.Products.RemoveRange(products);
+                    }
+                    int affected = db.SaveChanges();
+                    t.Commit();
+                    return affected;
                 }
-                else {
-                    db.Products.RemoveRange(products);
-                }
-                int affected = db.SaveChanges();
-                return affected;
             }
         }
     }
