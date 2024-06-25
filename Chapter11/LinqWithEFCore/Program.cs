@@ -12,7 +12,13 @@ namespace LinqWithEFCore {
                 DbSet<Product> allProducts = db.Products;
                 IQueryable<Product> filteredProducts = allProducts.Where(prod => prod.UnitPrice < 10m);
                 IOrderedQueryable<Product> sortedProducts = filteredProducts.OrderByDescending(prod => prod.UnitPrice);
-                foreach (Product p in sortedProducts) {
+                var projectedProducts = sortedProducts.
+                    Select(prod => new {
+                        prod.ProductId,
+                        prod.ProductName,
+                        prod.UnitPrice,
+                    });
+                foreach (var p in projectedProducts) {
                     Console.WriteLine($"{p.ProductId}: {p.ProductName} costs {p.UnitPrice:$#,##0.00}");
                 }
                 Console.WriteLine();
