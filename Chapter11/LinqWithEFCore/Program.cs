@@ -4,7 +4,24 @@ using Packt.Shared;
 namespace LinqWithEFCore {
     internal class Program {
         static void Main(string[] args) {
-            GroupJoinCategoriesAndProducts();
+            string[] names = new[] { "Michael", "Pam", "Jim", "Dwight", "Angela", "Kevin", "Toby", "Creed"};
+            var query1 = (from name in names
+                where name.Length > 4
+                orderby name.Length, name
+                select name);
+            var query2 = (from name in names
+                where name.Length > 4
+                select name).
+                Skip(2).
+                Take(5);
+            Console.WriteLine("Query1:");
+            foreach (var name in query1) {
+                Console.WriteLine(name);
+            }
+            Console.WriteLine("\nQuery2:");
+            foreach (var name in query2) {
+                Console.WriteLine(name);
+            }
         }
 
         static void FilterAndSort() {
