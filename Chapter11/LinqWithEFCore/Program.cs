@@ -4,7 +4,7 @@ using Packt.Shared;
 namespace LinqWithEFCore {
     internal class Program {
         static void Main(string[] args) {
-            FilterAndSort();
+            AggregateProducts();
         }
 
         static void FilterAndSort() {
@@ -65,6 +65,17 @@ namespace LinqWithEFCore {
                         Console.WriteLine($"\t{prod.ProductName}");
                     }
                 }
+            }
+        }
+
+        static void AggregateProducts() {
+            using(Northwind db = new()) {
+                Console.WriteLine($"{"Product count:",          -25} {db.Products.Count(), 10}");
+                Console.WriteLine($"{"Highest product price:",  -25} {db.Products.Max(p => p.UnitPrice),10:$#,##0.00}");
+                Console.WriteLine($"{"Sum of units in stock:",  -25} {db.Products.Sum(p => p.UnitsInStock), 10:N0}");
+                Console.WriteLine($"{"Sum of units on order:",  -25} {db.Products.Sum(p => p.UnitsOnOrder),10:N0}");
+                Console.WriteLine($"{"Avarage unit price:",     -25} {db.Products.Average(p => p.UnitPrice),10:$#,##0.00}");
+                Console.WriteLine($"{"Value of units in stock:",-25} {db.Products.Sum(p => p.UnitPrice * p.UnitsInStock),10:$#,##0.00}");
             }
         }
     }
