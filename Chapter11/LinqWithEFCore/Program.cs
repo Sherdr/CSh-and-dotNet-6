@@ -4,7 +4,7 @@ using Packt.Shared;
 namespace LinqWithEFCore {
     internal class Program {
         static void Main(string[] args) {
-            AggregateProducts();
+            CustomExtensionMethods();
         }
 
         static void FilterAndSort() {
@@ -76,6 +76,17 @@ namespace LinqWithEFCore {
                 Console.WriteLine($"{"Sum of units on order:",  -25} {db.Products.Sum(p => p.UnitsOnOrder),10:N0}");
                 Console.WriteLine($"{"Avarage unit price:",     -25} {db.Products.Average(p => p.UnitPrice),10:$#,##0.00}");
                 Console.WriteLine($"{"Value of units in stock:",-25} {db.Products.Sum(p => p.UnitPrice * p.UnitsInStock),10:$#,##0.00}");
+            }
+        }
+
+        static void CustomExtensionMethods() {
+            using(Northwind db = new()) {
+                Console.WriteLine($"{"Mean units in stock:",-25} {db.Products.Average(p => p.UnitsInStock),10:N0}");
+                Console.WriteLine($"{"Mean units price:",-25} {db.Products.Average(p => p.UnitPrice),10:$#,##0.00}");
+                Console.WriteLine($"{"Median units in stock:",-25} {db.Products.Median(p => p.UnitsInStock),10:N0}");
+                Console.WriteLine($"{"Median units price:",-25} {db.Products.Median(p => p.UnitPrice),10:$#,##0.00}");
+                Console.WriteLine($"{"Mode units in stock:",-25} {db.Products.Mode(p => p.UnitsInStock),10:N0}");
+                Console.WriteLine($"{"Mode units price:",-25} {db.Products.Mode(p => p.UnitPrice),10:$#,##0.00}");
             }
         }
     }
