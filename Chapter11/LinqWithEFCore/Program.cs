@@ -1,10 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Packt.Shared;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace LinqWithEFCore {
     internal class Program {
         static void Main(string[] args) {
-            CustomExtensionMethods();
+            OutputProductsXml();
+            Console.WriteLine();
+            ProccessSettings();
         }
 
         static void FilterAndSort() {
@@ -87,6 +91,33 @@ namespace LinqWithEFCore {
                 Console.WriteLine($"{"Median units price:",-25} {db.Products.Median(p => p.UnitPrice),10:$#,##0.00}");
                 Console.WriteLine($"{"Mode units in stock:",-25} {db.Products.Mode(p => p.UnitsInStock),10:N0}");
                 Console.WriteLine($"{"Mode units price:",-25} {db.Products.Mode(p => p.UnitPrice),10:$#,##0.00}");
+            }
+        }
+
+        static void OutputProductsXml() {
+            using (Northwind db = new()) {
+                Product[] productsArray = db.Products.ToArray();
+                XElement xml = new("products",
+                    from p in productsArray
+                    select new XElement("product",
+                        new XAttribute("id", p.ProductId),
+                        new XAttribute("price", p.UnitPrice),
+                        new XElement("name", p.ProductName)
+                    ));
+                Console.WriteLine(xml.ToString());
+            }
+        }
+
+        static void ProccessSettings() {
+            XDocument doc = XDocument.Load("settings.xml");
+            var appSettings = doc.Descendants("appSettings")
+                .Descendants("add")
+                .Select(node => new {
+                    Key = node.Attribute("key")?.Value,
+                    Value = node.Attribute("value")?.Value
+                }).ToArray();
+            foreach(var item in appSettings) {
+                Console.WriteLine($"{item.Key}: {item.Value}");
             }
         }
     }
