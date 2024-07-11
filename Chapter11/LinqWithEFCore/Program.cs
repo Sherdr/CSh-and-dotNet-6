@@ -4,31 +4,19 @@ using Packt.Shared;
 namespace LinqWithEFCore {
     internal class Program {
         static void Main(string[] args) {
-            string[] names = new[] { "Michael", "Pam", "Jim", "Dwight", "Angela", "Kevin", "Toby", "Creed"};
-            var query1 = (from name in names
-                where name.Length > 4
-                orderby name.Length, name
-                select name);
-            var query2 = (from name in names
-                where name.Length > 4
-                select name).
-                Skip(2).
-                Take(5);
-            Console.WriteLine("Query1:");
-            foreach (var name in query1) {
-                Console.WriteLine(name);
-            }
-            Console.WriteLine("\nQuery2:");
-            foreach (var name in query2) {
-                Console.WriteLine(name);
-            }
+            FilterAndSort();
         }
 
         static void FilterAndSort() {
             Console.WriteLine("Products that cost less than $10:");
             using(Northwind db = new()) {
                 DbSet<Product> allProducts = db.Products;
-                IQueryable<Product> filteredProducts = allProducts.Where(prod => prod.UnitPrice < 10m);
+                if(allProducts is null) {
+                    Console.WriteLine("No products found.");
+                    return;
+                }
+                IQueryable<Product> processedProducts = allProducts.ProcessSequence();
+                IQueryable<Product> filteredProducts = processedProducts.Where(product => product.UnitPrice < 10m);
                 IOrderedQueryable<Product> sortedProducts = filteredProducts.OrderByDescending(prod => prod.UnitPrice);
                 var projectedProducts = sortedProducts.
                     Select(prod => new {
